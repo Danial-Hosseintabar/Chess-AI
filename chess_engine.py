@@ -61,7 +61,7 @@ def get_piece_name(row, column):
 def get_board():
     return board
 
-def valid_pos(row, column, max_distance):
+def valid_pos(row, column):
     return 0 <= row and row < 8 and column < 8 and column >= 0
 
 def get_rook_moves(row, column, max_distance):

@@ -19,6 +19,8 @@ BACKGROUND_COLOR = (40 + 195*random.randint(0, 1), 40 + 195*random.randint(0, 1)
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 
+# Loading Piece images
+
 piece_names = ["PAWN_W", "PAWN_B", "ROOK_B", "ROOK_W", "BISHOP_W", "BISHOP_B", "KNIGHT_B", "KNIGHT_W", "KING_W", "KING_B", "QUEEN_B", "QUEEN_W"]
 piece_images = {}
 
@@ -32,13 +34,16 @@ def handle_event(event):
 	# print(event)
 	if(event.type == pygame.QUIT):
 		RUNNING = False
-	if(event.type == pygame.MOUSEBUTTONUP):
-		update_window()
+	if(event.type == pygame.MOUSEBUTTONDOWN):
+		row = int((event.pos[1] - Y_OFFSET)/CELL_SIZE)
+		column = int((event.pos[0] - X_OFFSET)/CELL_SIZE)
+		print(get_moves(row, column))
 
 def update_window():
-	print("----UPDATE----")
+	# Backgroud color
 	window.fill(BACKGROUND_COLOR)
 
+	# Board
 	for i in range(0, 8):
 		for j in range(0, 8):
 			color = (0, 0, 230) if ( i + j ) % 2 == 0 else (255, 255, 255)
@@ -46,7 +51,6 @@ def update_window():
 			y = Y_OFFSET + i * CELL_SIZE
 			pygame.draw.rect(window, color , pygame.Rect(x, y, CELL_SIZE, CELL_SIZE), 0)
 			if not is_empty(i, j):
-				print("name : " + get_piece_name(i, j) + ", i , j " + str(i) + " " + str(j) )
 				window.blit(piece_images[get_piece_name(i, j)], (x, y))
 			
 
@@ -56,6 +60,7 @@ def main():
 	update_window()
 	while(RUNNING):
 			clock.tick(60)
+			update_window()
 			for event in pygame.event.get() :
 				handle_event(event)
 	pygame.quit()
