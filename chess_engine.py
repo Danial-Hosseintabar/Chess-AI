@@ -4,6 +4,8 @@ INF = 100
 
 board = []
 
+# Enums
+
 class Piece(Enum):
     EMPTY = -1
     PAWN = 0
@@ -17,20 +19,14 @@ class Player(Enum):
     WHITE = 0
     BLACK = 1
 
-# empty : -1
-# pawn : 0
-# king : 1
-# queen : 2
-# bishop : 3
-# rook : 4
-# knight : 5
+# Initial settings on board
 
 for i in range(0, 8):
     board.append([])
 
 for row_number in range(2, 6):
     for j in range(0, 8):
-        board[row_number].append(-1)
+        board[row_number].append((Piece.EMPTY, -1))
 
 for row_number in [1, 6]:
     for j in range(0, 8):
@@ -54,6 +50,16 @@ board[7] = [(Piece.ROOK, Player.WHITE),
             (Piece.KNIGHT, Player.WHITE),
             (Piece.ROOK, Player.WHITE)]
 
+# Functions
+
+def is_empty(row, column):
+    return board[row][column][0] == Piece.EMPTY
+
+def get_piece_name(row, column):
+    return board[row][column][0].name + "_" + ( "W" if board[row][column][1] == Player.WHITE else "B")
+
+def get_board():
+    return board
 
 def valid_pos(row, column, max_distance):
     return 0 <= row and row < 8 and column < 8 and column >= 0
