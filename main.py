@@ -24,12 +24,23 @@ clock = pygame.time.Clock()
 piece_names = ["PAWN_W", "PAWN_B", "ROOK_B", "ROOK_W", "BISHOP_W", "BISHOP_B", "KNIGHT_B", "KNIGHT_W", "KING_W", "KING_B", "QUEEN_B", "QUEEN_W"]
 piece_images = {}
 
+# Game related variables
+
+highlighted = [[False for j in range(0, 8)] for i in range(0, 8)]
+selected_piece_pos = (-1, -1)
+
 for name in piece_names:
 	piece_images[name] = pygame.transform.scale(pygame.image.load(os.path.join("images/"+name+".png")), (CELL_SIZE, CELL_SIZE))
 	
 # Functions
 
+def clear_highlighted():
+	for i in range(0, 8):
+		for j in range(0, 8):
+			highlighted[i][j] = False
+
 def handle_event(event):
+	global selected_piece_pos
 	global RUNNING
 	# print(event)
 	if(event.type == pygame.QUIT):
@@ -37,7 +48,14 @@ def handle_event(event):
 	if(event.type == pygame.MOUSEBUTTONDOWN):
 		row = int((event.pos[1] - Y_OFFSET)/CELL_SIZE)
 		column = int((event.pos[0] - X_OFFSET)/CELL_SIZE)
-		print(get_moves(row, column))
+		if not is_empty(row, column):
+			selected_piece_pos = (row, column)
+			for cell in get_moves(row, column):
+				highlighted[cell[0]][cell[1]] = True
+		elif highlighted[row][column]:
+			clear_highlighted()
+			move_piece(selected_piece_pos, (row, column))
+	
 
 def update_window():
 	# Backgroud color
@@ -47,6 +65,8 @@ def update_window():
 	for i in range(0, 8):
 		for j in range(0, 8):
 			color = (0, 0, 230) if ( i + j ) % 2 == 0 else (255, 255, 255)
+			if(highlighted[i][j]):
+				color = (color[0]/2, color[1]/2 + 120, color[2]/5)
 			x = X_OFFSET + j * CELL_SIZE
 			y = Y_OFFSET + i * CELL_SIZE
 			pygame.draw.rect(window, color , pygame.Rect(x, y, CELL_SIZE, CELL_SIZE), 0)
