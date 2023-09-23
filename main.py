@@ -52,7 +52,13 @@ def handle_event(event):
 		RUNNING = False
 	
 	if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE :
-		ai.count_moves()
+		ai.cnt = 0
+		score, cell_from, cell_to = ai.minimax(4)
+		print("")
+		print("")
+		print("cnt: ", ai.cnt)
+		print("relative_score: ", game.relative_score)
+		game.move_piece(cell_from, cell_to)
 
 
 	if(event.type == pygame.MOUSEBUTTONDOWN):

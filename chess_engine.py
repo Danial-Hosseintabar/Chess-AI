@@ -17,6 +17,8 @@ class Player(Enum):
 
 INF = 100
 
+piece_score = {"KING": 0, "PAWN": 1, "QUEEN": 9, "KNIGHT": 3, "BISHOP": 3, "ROOK": 5}
+
 class ChessGame:
     def __init__(self):
             
@@ -24,6 +26,8 @@ class ChessGame:
         self.turn = 0
 
         # Initial settings on board
+
+        self.relative_score = 0
 
         for i in range(0, 8):
             self.board.append([])
@@ -86,12 +90,12 @@ class ChessGame:
             column_increment = each[1]
             row_delta = row_increment
             column_delta = column_increment
-            while(abs(row_delta) <= max_distance and self.valid_pos(row + row_delta, column + column_delta) and self.board[row + row_delta][column + column_delta][0] == Piece.EMPTY):
+            while(max(abs(row_delta), abs(column_delta)) <= max_distance and self.valid_pos(row + row_delta, column + column_delta) and self.board[row + row_delta][column + column_delta][0] == Piece.EMPTY):
                 moves.append((row + row_delta, column + column_delta))
                 row_delta += row_increment
                 column_delta += column_increment
 
-            if(self.valid_pos(row + row_delta, column + column_delta) and abs(row_delta) <= max_distance):
+            if(self.valid_pos(row + row_delta, column + column_delta) and max(abs(row_delta), abs(column_delta)) <= max_distance):
                 if(self.board[row + row_delta][column + column_delta][1] != self.board[row][column][1]):
                     attacks.append((row + row_delta, column + column_delta))
 
@@ -247,6 +251,11 @@ class ChessGame:
         return ret
 
     def attack_piece(self, first, second):
+        lost_score = piece_score[self.board[second[0]][second[1]][0].name]
+        if self.board[second[0]][second[1]][1] == Player.BLACK:
+            self.relative_score += lost_score
+        else:
+            self.relative_score -= lost_score
         self.move_piece(first, second)
 
     # TODO: en passant
