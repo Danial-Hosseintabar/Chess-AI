@@ -26,7 +26,8 @@ piece_images = {}
 
 # Game related variables
 
-highlighted = [[False for j in range(0, 8)] for i in range(0, 8)]
+can_move = [[False for j in range(0, 8)] for i in range(0, 8)]
+can_attack = [[False for j in range(0, 8)] for i in range(0, 8)]
 selected_piece_pos = (-1, -1)
 
 for name in piece_names:
@@ -34,28 +35,41 @@ for name in piece_names:
 	
 # Functions
 
-def clear_highlighted():
+def clear_highlightes():
 	for i in range(0, 8):
 		for j in range(0, 8):
-			highlighted[i][j] = False
+			can_move[i][j] = False
+			can_attack[i][j] = False
 
 def handle_event(event):
 	global selected_piece_pos
 	global RUNNING
-	# print(event)
+	
 	if(event.type == pygame.QUIT):
 		RUNNING = False
 	if(event.type == pygame.MOUSEBUTTONDOWN):
 		row = int((event.pos[1] - Y_OFFSET)/CELL_SIZE)
 		column = int((event.pos[0] - X_OFFSET)/CELL_SIZE)
-		if not is_empty(row, column):
+		
+		if not is_empty(row, column) and not can_attack[row][column] and board[row][column][1] == get_turn():
+			if(selected_piece_pos != (row, column)):
+				clear_highlightes()
 			selected_piece_pos = (row, column)
 			for cell in get_moves(row, column):
-				highlighted[cell[0]][cell[1]] = True
-		elif highlighted[row][column]:
-			clear_highlighted()
+				can_move[cell[0]][cell[1]] = True
+			for cell in get_attacks(row, column):
+				can_attack[cell[0]][cell[1]] = True
+		
+		elif can_move[row][column]:
+			clear_highlightes()
 			move_piece(selected_piece_pos, (row, column))
-	
+		
+		elif can_attack[row][column]:
+			clear_highlightes()
+			attack_piece(selected_piece_pos, (row, column))
+
+		else:
+			clear_highlightes()
 
 def update_window():
 	# Backgroud color
@@ -65,8 +79,10 @@ def update_window():
 	for i in range(0, 8):
 		for j in range(0, 8):
 			color = (0, 0, 230) if ( i + j ) % 2 == 0 else (255, 255, 255)
-			if(highlighted[i][j]):
+			if can_move[i][j]:
 				color = (color[0]/2, color[1]/2 + 120, color[2]/5)
+			if can_attack[i][j]:
+				color = (255, 0, 0)
 			x = X_OFFSET + j * CELL_SIZE
 			y = Y_OFFSET + i * CELL_SIZE
 			pygame.draw.rect(window, color , pygame.Rect(x, y, CELL_SIZE, CELL_SIZE), 0)
@@ -84,7 +100,6 @@ def main():
 			for event in pygame.event.get() :
 				handle_event(event)
 	pygame.quit()
-
 
 if __name__ == "__main__":
 	main()
