@@ -76,44 +76,19 @@ def get_rook_moves(row, column, max_distance):
     moves = []
     attacks = []
 
-    delta = 1
-    while(delta <= max_distance and valid_pos(row + delta, column) and board[row+delta][column][0] == Piece.EMPTY):
-        moves.append((row + delta, column))
-        delta += 1
-    
-    if(delta <= max_distance and valid_pos(row + delta, column)):
-        if(board[row+delta][column][1] != board[row][column][1]):
-            attacks.append((row + delta, column))
+    for each in [[0, 1], [1, 0], [-1, 0], [0, -1]]:
+        row_increment = each[0]
+        column_increment = each[1]
+        row_delta = row_increment
+        column_delta = column_increment
+        while(abs(row_delta) <= max_distance and valid_pos(row + row_delta, column + column_delta) and board[row + row_delta][column + column_delta][0] == Piece.EMPTY):
+            moves.append((row + row_delta, column + column_delta))
+            row_delta += row_increment
+            column_delta += column_increment
 
-
-    delta = 1
-    while(delta <= max_distance and valid_pos(row - delta, column) and board[row - delta][column][0] == Piece.EMPTY):
-        moves.append((row - delta, column))
-        delta += 1
-    
-    if(delta <= max_distance and valid_pos(row - delta, column)):
-        if(board[row-delta][column][1] != board[row][column][1]):
-            attacks.append((row - delta, column))
-
-
-    delta = 1
-    while(delta <= max_distance and valid_pos(row, column + delta) and board[row][column + delta][0] == Piece.EMPTY):
-        moves.append((row, column + delta))
-        delta += 1
-    
-    if(delta <= max_distance and valid_pos(row, column+delta)):
-        if(board[row][column+delta][1] != board[row][column][1]):
-            attacks.append((row, column+delta))
-
-
-    delta = 1
-    while(delta <= max_distance and valid_pos(row, column - delta) and board[row][column - delta][0] == Piece.EMPTY):
-        moves.append((row, column - delta))
-        delta += 1
-    
-    if(delta <= max_distance and valid_pos(row, column-delta)):
-        if(board[row][column-delta][1] != board[row][column][1]):
-            attacks.append((row, column-delta))
+        if(valid_pos(row + row_delta, column + column_delta) and abs(row_delta) <= max_distance):
+            if(board[row + row_delta][column + column_delta][1] != board[row][column][1]):
+                attacks.append((row + row_delta, column + column_delta))
 
     return moves, attacks
 
@@ -121,42 +96,18 @@ def get_bishop_moves(row, column, max_distance):
     moves = []
     attacks = []
     
-    delta = 1
-    while(delta <= max_distance and valid_pos(row + delta, column + delta) and board[row + delta][column + delta][0] == Piece.EMPTY):
-        moves.append((row + delta, column + delta))
-        delta += 1
+    for row_increment in [-1, +1]:
+        for column_increment in [-1, +1]:
+            row_delta = row_increment
+            column_delta = column_increment
+            while(abs(row_delta) <= max_distance and valid_pos(row + row_delta, column + column_delta) and board[row + row_delta][column + column_delta][0] == Piece.EMPTY):
+                moves.append((row + row_delta, column + column_delta))
+                row_delta += row_increment
+                column_delta += column_increment
 
-    if(valid_pos(row + delta, column + delta) and delta <= max_distance):
-        if(board[row + delta][column + delta][1] != board[row][column][1]):
-            attacks.append((row + delta, column + delta))
-
-    delta = 1
-    while(delta <= max_distance and valid_pos(row - delta, column + delta) and board[row - delta][column + delta][0] == Piece.EMPTY):
-        moves.append((row - delta, column + delta))
-        delta += 1
-    
-    if(valid_pos(row - delta, column + delta) and delta <= max_distance):
-        if(board[row - delta][column + delta][1] != board[row][column][1]):
-            attacks.append((row - delta, column + delta))
-
-    delta = 1
-    while(delta <= max_distance and valid_pos(row + delta, column - delta) and board[row + delta][column - delta][0] == Piece.EMPTY):
-        moves.append((row + delta, column - delta))
-        delta += 1
-
-    if(valid_pos(row + delta, column - delta) and delta <= max_distance):
-        if(board[row + delta][column - delta][1] != board[row][column][1]):
-            attacks.append((row + delta, column - delta))
-
-
-    delta = 1
-    while(delta <= max_distance and valid_pos(row - delta, column - delta) and board[row - delta][column - delta][0] == Piece.EMPTY):
-        moves.append((row - delta, column - delta))
-        delta += 1
-
-    if(valid_pos(row - delta, column - delta) and delta <= max_distance):
-        if(board[row - delta][column - delta][1] != board[row][column][1]):
-            attacks.append((row - delta, column - delta))
+            if(valid_pos(row + row_delta, column + column_delta) and abs(row_delta) <= max_distance):
+                if(board[row + row_delta][column + column_delta][1] != board[row][column][1]):
+                    attacks.append((row + row_delta, column + column_delta))
 
     return moves, attacks
 
