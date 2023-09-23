@@ -6,6 +6,7 @@ import os
 
 pygame.init()
 game = chess_engine.ChessGame()
+ai.set_board(game.get_board(), game)
 
 # CONSTANTS
 
@@ -49,10 +50,16 @@ def handle_event(event):
 	
 	if(event.type == pygame.QUIT):
 		RUNNING = False
+	
+	if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE :
+		ai.count_moves()
+
+
 	if(event.type == pygame.MOUSEBUTTONDOWN):
-		ai.func()
 		row = int((event.pos[1] - Y_OFFSET)/CELL_SIZE)
 		column = int((event.pos[0] - X_OFFSET)/CELL_SIZE)
+		if not game.valid_pos(row, column):
+			return
 		
 		if not game.is_empty(row, column) and not can_attack[row][column] and game.board[row][column][1] == game.get_turn():
 			if(selected_piece_pos != (row, column)):

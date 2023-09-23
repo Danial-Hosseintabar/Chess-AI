@@ -56,6 +56,9 @@ class ChessGame:
 
     # Functions
 
+    def set_board(self, new_board):
+        self.board = new_board
+
     def get_turn(self):
         return Player.WHITE if self.turn % 2 == 0 else Player.BLACK
 
