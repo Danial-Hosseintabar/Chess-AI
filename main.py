@@ -1,9 +1,11 @@
 import pygame
-from chess_engine import *
+import chess_engine
+import chess_ai as ai
 import random
 import os
 
 pygame.init()
+game = chess_engine.ChessGame()
 
 # CONSTANTS
 
@@ -48,25 +50,26 @@ def handle_event(event):
 	if(event.type == pygame.QUIT):
 		RUNNING = False
 	if(event.type == pygame.MOUSEBUTTONDOWN):
+		ai.func()
 		row = int((event.pos[1] - Y_OFFSET)/CELL_SIZE)
 		column = int((event.pos[0] - X_OFFSET)/CELL_SIZE)
 		
-		if not is_empty(row, column) and not can_attack[row][column] and board[row][column][1] == get_turn():
+		if not game.is_empty(row, column) and not can_attack[row][column] and game.board[row][column][1] == game.get_turn():
 			if(selected_piece_pos != (row, column)):
 				clear_highlightes()
 			selected_piece_pos = (row, column)
-			for cell in get_moves(row, column):
+			for cell in game.get_moves(row, column):
 				can_move[cell[0]][cell[1]] = True
-			for cell in get_attacks(row, column):
+			for cell in game.get_attacks(row, column):
 				can_attack[cell[0]][cell[1]] = True
 		
 		elif can_move[row][column]:
 			clear_highlightes()
-			move_piece(selected_piece_pos, (row, column))
+			game.move_piece(selected_piece_pos, (row, column))
 		
 		elif can_attack[row][column]:
 			clear_highlightes()
-			attack_piece(selected_piece_pos, (row, column))
+			game.attack_piece(selected_piece_pos, (row, column))
 
 		else:
 			clear_highlightes()
@@ -86,8 +89,8 @@ def update_window():
 			x = X_OFFSET + j * CELL_SIZE
 			y = Y_OFFSET + i * CELL_SIZE
 			pygame.draw.rect(window, color , pygame.Rect(x, y, CELL_SIZE, CELL_SIZE), 0)
-			if not is_empty(i, j):
-				window.blit(piece_images[get_piece_name(i, j)], (x, y))
+			if not game.is_empty(i, j):
+				window.blit(piece_images[game.get_piece_name(i, j)], (x, y))
 			
 
 	pygame.display.update()
