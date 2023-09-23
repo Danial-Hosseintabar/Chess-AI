@@ -3,6 +3,7 @@ import chess_engine
 import chess_ai as ai
 import random
 import os
+import time
 
 pygame.init()
 game = chess_engine.ChessGame()
@@ -13,14 +14,17 @@ ai.set_board(game.get_board(), game)
 HEIGHT = 650
 WIDTH = 800
 CELL_SIZE = min(WIDTH, HEIGHT) / 10
-X_OFFSET = (WIDTH - 8 * CELL_SIZE) / 2
+X_OFFSET = (WIDTH - 8 * CELL_SIZE) / 6
 Y_OFFSET = (HEIGHT - 8 * CELL_SIZE) / 2
 FPS = 60
 RUNNING = True
-BACKGROUND_COLOR = (40 + 195*random.randint(0, 1), 40 + 195*random.randint(0, 1), 40 + 195*random.randint(0, 1))
+TEXT_COLOR = (10, 200, 150)
+BACKGROUND_COLOR = (100, 100, 100)
+FONT = pygame.font.Font("./fonts/RobotoMono-Bold.ttf", 20)
 
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
+ai_situation = "bored"
 
 # Loading Piece images
 
@@ -38,6 +42,26 @@ for name in piece_names:
 	
 # Functions
 
+def use_ai():
+	global ai_situation
+	ai_situation = "thinking"
+	update_window()
+	ai.cnt = 0
+	last_time = time.time()
+	ai_situation = "bored"
+	score, cell_from, cell_to = ai.minimax(4)
+	if(game.is_empty(cell_to[0], cell_to[1])):
+		game.move_piece(cell_from, cell_to)
+	else:
+		game.attack_piece(cell_from, cell_to)
+	print("")
+	print("")
+	print("cnt: ", ai.cnt)
+	print("relative_score: ", game.relative_score)
+	print("time:", round(time.time() - last_time, 2), "(s)")
+	print("move: ", cell_from, cell_to)
+
+
 def clear_highlightes():
 	for i in range(0, 8):
 		for j in range(0, 8):
@@ -52,14 +76,7 @@ def handle_event(event):
 		RUNNING = False
 	
 	if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE :
-		ai.cnt = 0
-		score, cell_from, cell_to = ai.minimax(4)
-		print("")
-		print("")
-		print("cnt: ", ai.cnt)
-		print("relative_score: ", game.relative_score)
-		game.move_piece(cell_from, cell_to)
-
+		use_ai()
 
 	if(event.type == pygame.MOUSEBUTTONDOWN):
 		row = int((event.pos[1] - Y_OFFSET)/CELL_SIZE)
@@ -79,17 +96,32 @@ def handle_event(event):
 		elif can_move[row][column]:
 			clear_highlightes()
 			game.move_piece(selected_piece_pos, (row, column))
+			use_ai()
 		
 		elif can_attack[row][column]:
 			clear_highlightes()
 			game.attack_piece(selected_piece_pos, (row, column))
+			use_ai()
 
 		else:
 			clear_highlightes()
 
 def update_window():
+	global FONT
+	global ai_situation
+
 	# Backgroud color
 	window.fill(BACKGROUND_COLOR)
+
+	# Texts
+
+	texts = [FONT.render("score: " + str(game.relative_score), True, TEXT_COLOR, BACKGROUND_COLOR),
+		  	FONT.render("AI : " + str(ai_situation), True, TEXT_COLOR, BACKGROUND_COLOR),]
+	textRect = [texts[i].get_rect() for i in range(0, len(texts))]
+	for i in range(0, len(texts)):
+		textRect[i].center = (31*WIDTH/36, HEIGHT/5 + i * 25)
+	for i in range(0, len(texts)):
+		window.blit(texts[i], textRect[i])
 
 	# Board
 	for i in range(0, 8):

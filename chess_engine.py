@@ -260,3 +260,5 @@ class ChessGame:
 
     # TODO: en passant
     # TODO: castle
+    # TODO: check
+    # TODO: check mate
