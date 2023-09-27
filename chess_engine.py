@@ -15,7 +15,7 @@ class Player(Enum):
     WHITE = 0
     BLACK = 1
 
-INF = 100
+INF = 1000000
 
 piece_score = {"KING": 0, "PAWN": 1, "QUEEN": 9, "KNIGHT": 3, "BISHOP": 3, "ROOK": 5}
 

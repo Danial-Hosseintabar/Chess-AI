@@ -49,17 +49,18 @@ def use_ai():
 	ai.cnt = 0
 	last_time = time.time()
 	ai_situation = "bored"
-	score, cell_from, cell_to = ai.minimax(4)
-	if(game.is_empty(cell_to[0], cell_to[1])):
-		game.move_piece(cell_from, cell_to)
+	score, from_cell, to_cell = ai.minimax(4, -ai.INF, ai.INF, False)
+	if(game.is_empty(to_cell[0], to_cell[1])):
+		game.move_piece(from_cell, to_cell)
 	else:
-		game.attack_piece(cell_from, cell_to)
+		game.attack_piece(from_cell, to_cell)
 	print("")
 	print("")
-	print("cnt: ", ai.cnt)
+	print("checked positions count: ", ai.cnt)
+	print("from_cell, to_cell", from_cell, to_cell)
 	print("relative_score: ", game.relative_score)
 	print("time:", round(time.time() - last_time, 2), "(s)")
-	print("move: ", cell_from, cell_to)
+	
 
 
 def clear_highlightes():
