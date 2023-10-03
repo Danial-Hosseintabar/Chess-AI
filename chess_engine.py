@@ -24,6 +24,7 @@ class ChessGame:
             
         self.board = []
         self.turn = 0
+        self.is_checked = False
 
         # Initial settings on board
 
@@ -58,6 +59,9 @@ class ChessGame:
                     (Piece.KNIGHT, Player.WHITE),
                     (Piece.ROOK, Player.WHITE)]
 
+        self.wking_pos = (7, 3)
+        self.bking_pos = (0, 3)
+
     # Functions
 
     def set_board(self, new_board):
@@ -80,6 +84,47 @@ class ChessGame:
 
     def valid_pos(self, row, column):
         return 0 <= row and row < 8 and column < 8 and column >= 0
+
+
+    def update_is_check(self):
+        
+        opposite_side = Player.WHITE if self.turn % 2 == 1 else Player.BLACK
+        our_side = Player.WHITE if self.turn % 2 == 0 else Player.BLACK
+        
+        # checking for horizontal/vertical checks by queens or rooks
+        
+        king_row, king_column = self.wking_pos if self.turn % 2 == 0 else self.bking_pos
+        
+        for delta_r, delta_c in [(-1, 0), (1, 0), (0, 1), (0, -1)]:
+            row, column = king_row, king_column
+            while(self.valid_pos(row + delta_r, column + delta_c)):
+                if self.board[row + delta_r][column + delta_c][0] != Piece.EMPTY :
+                    if self.board[row + delta_r][column + delta_c][1] == opposite_side and self.board[row + delta_r][column + delta_c][0] in [Piece.ROOK, Piece.QUEEN]:
+                        print("CHECK!")
+                        self.is_checked = True
+                        return True
+                    break
+                row += delta_r
+                column += delta_c
+        
+        # checking for diagonal checks from bishops or queens
+
+        for delta_r, delta_c in [(-1, 1), (1, -1), (-1, -1), (1, 1)]:
+            row, column = king_row, king_column
+            while(self.valid_pos(row + delta_r, column + delta_c)):
+                if self.board[row + delta_r][column + delta_c][0] != Piece.EMPTY :
+                    if self.board[row + delta_r][column + delta_c][1] == opposite_side and self.board[row + delta_r][column + delta_c][0] in [Piece.BISHOP, Piece.QUEEN]:
+                        print(str(our_side) + " IS CHECKED!")
+                        self.is_checked = True
+                        return True
+                    break
+                row += delta_r
+                column += delta_c
+
+        print("NO CHECK FOUND")
+        self.is_checked = False
+        return False
+
 
     def get_rook_moves(self, row, column, max_distance):
         moves = []
@@ -207,6 +252,7 @@ class ChessGame:
         self.board[new_pos[0]][new_pos[1]] = self.board[last_pos[0]][last_pos[1]]
         self.board[last_pos[0]][last_pos[1]] = (Piece.EMPTY, -1)
         self.change_turn()
+        self.update_is_check()
 
     def get_attacks(self, row, column):
         ret = []
@@ -260,5 +306,4 @@ class ChessGame:
 
     # TODO: en passant
     # TODO: castle
-    # TODO: check
     # TODO: check mate

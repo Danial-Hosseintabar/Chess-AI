@@ -97,12 +97,12 @@ def handle_event(event):
 		elif can_move[row][column]:
 			clear_highlightes()
 			game.move_piece(selected_piece_pos, (row, column))
-			use_ai()
+			# use_ai()
 		
 		elif can_attack[row][column]:
 			clear_highlightes()
 			game.attack_piece(selected_piece_pos, (row, column))
-			use_ai()
+			# use_ai()
 
 		else:
 			clear_highlightes()
