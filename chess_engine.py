@@ -100,7 +100,6 @@ class ChessGame:
             while(self.valid_pos(row + delta_r, column + delta_c)):
                 if self.board[row + delta_r][column + delta_c][0] != Piece.EMPTY :
                     if self.board[row + delta_r][column + delta_c][1] == opposite_side and self.board[row + delta_r][column + delta_c][0] in [Piece.ROOK, Piece.QUEEN]:
-                        print("CHECK!")
                         self.is_checked = True
                         return True
                     break
@@ -114,14 +113,12 @@ class ChessGame:
             while(self.valid_pos(row + delta_r, column + delta_c)):
                 if self.board[row + delta_r][column + delta_c][0] != Piece.EMPTY :
                     if self.board[row + delta_r][column + delta_c][1] == opposite_side and self.board[row + delta_r][column + delta_c][0] in [Piece.BISHOP, Piece.QUEEN]:
-                        print(str(our_side) + " IS CHECKED!")
                         self.is_checked = True
                         return True
                     break
                 row += delta_r
                 column += delta_c
 
-        print("NO CHECK FOUND")
         self.is_checked = False
         return False
 
